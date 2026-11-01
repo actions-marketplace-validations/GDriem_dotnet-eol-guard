@@ -1,0 +1,11 @@
+{
+  "name": "dotnet-eol-guard",
+  "owner": { "name": "Gadi Orellana" },
+  "plugins": [
+    {
+      "name": "dotnet-eol-guard",
+      "source": "./",
+      "description": "Find and fix end-of-life .NET runtimes and vulnerable NuGet packages, then verify the upgrade."
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+name: dotnet-eol-guard
+description: Fail the build when a .NET repository uses an end-of-life runtime, SDK, container image or vulnerable NuGet package.
+author: Gadi Orellana
+branding:
+  icon: shield
+  color: purple
+inputs:
+  path:
+    description: Directory to scan, relative to the workspace.
+    default: "."
+  fail-on:
+    description: Lowest severity that fails the step (critical, high, medium, low, none).
+    default: high
+  warn-days:
+    description: Flag channels that lose support within this many days.
+    default: "180"
+  packages:
+    description: Audit NuGet packages for vulnerabilities and deprecations (needs restore access to your feeds).
+    default: "true"
+  report:
+    description: Path of the Markdown report written to the workspace.
+    default: eol-guard-report.md
+outputs:
+  report:
+    description: Path of the Markdown report.
+    value: ${{ inputs.report }}
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 10.0.x
+    - name: Scan
+      shell: bash
+      # Runs from the action folder so a global.json in the scanned repo does not pick the SDK for the scanner.
+      working-directory: ${{ github.action_path }}/skills/dotnet-eol-guard/scripts
+      env:
+        INPUT_PATH: ${{ github.workspace }}/${{ inputs.path }}
+        INPUT_FAIL_ON: ${{ inputs.fail-on }}
+        INPUT_WARN_DAYS: ${{ inputs.warn-days }}
+        INPUT_PACKAGES: ${{ inputs.packages }}
+        INPUT_REPORT: ${{ github.workspace }}/${{ inputs.report }}
+      run: |
+        args=(--path "$INPUT_PATH" --fail-on "$INPUT_FAIL_ON" --warn-days "$INPUT_WARN_DAYS" --out "$INPUT_REPORT")
+        [ "$INPUT_PACKAGES" = "true" ] || args+=(--no-packages)
+        set +e
+        dotnet run eol-guard.cs -- "${args[@]}"
+        code=$?
+        set -e
+        [ -f "$INPUT_REPORT" ] && cat "$INPUT_REPORT" >> "$GITHUB_STEP_SUMMARY"
+        exit $code

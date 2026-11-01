@@ -1,0 +1,9 @@
+{
+  "name": "dotnet-eol-guard",
+  "version": "0.1.0",
+  "description": "Find and fix end-of-life .NET runtimes and vulnerable NuGet packages, then verify the upgrade.",
+  "author": { "name": "Gadi Orellana" },
+  "repository": "https://github.com/GDriem/dotnet-eol-guard",
+  "license": "MIT",
+  "keywords": ["dotnet", "security", "eol", "nuget", "upgrade", "cve"]
+}

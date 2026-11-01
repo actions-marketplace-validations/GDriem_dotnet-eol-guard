@@ -1,0 +1,6 @@
+bin/
+obj/
+/eol-*.md
+/eol-*.json
+/eol-guard-report.*
+.DS_Store

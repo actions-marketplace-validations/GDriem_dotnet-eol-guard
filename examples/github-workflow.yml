@@ -1,0 +1,15 @@
+# .github/workflows/dotnet-eol-guard.yml
+name: dotnet-eol-guard
+on:
+  pull_request:
+  schedule:
+    - cron: "0 12 * * 1" # every Monday: new CVEs and EOL dates appear without code changes
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # If your global.json pins an SDK the runner does not have, install it here first.
+      - uses: GDriem/dotnet-eol-guard@v0.1.0
+        with:
+          fail-on: high
